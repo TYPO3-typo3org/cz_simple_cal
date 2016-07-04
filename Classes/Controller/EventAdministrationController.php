@@ -179,6 +179,7 @@ class Tx_CzSimpleCal_Controller_EventAdministrationController extends Tx_Extbase
 				$mail->setSubject('Please review the new event from user ' . $GLOBALS['TSFE']->fe_user->user['username']);
 				$mail->setFrom('noreply@typo3.org');
 				$mail->setBody('There is a new event by the user ' . $GLOBALS['TSFE']->fe_user->user['username'] .'! Please review it.');
+				$mail->send();
 			}
 
 			$this->eventRepository->add($newEvent);
