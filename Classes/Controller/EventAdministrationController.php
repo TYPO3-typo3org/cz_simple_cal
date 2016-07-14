@@ -165,20 +165,17 @@ class Tx_CzSimpleCal_Controller_EventAdministrationController extends Tx_Extbase
 		$this->view->assign('newEvent', $newEvent);
 
 		if ($this->isEventValid($newEvent)) {
-			$newEvent->setHidden(TRUE);
 			// check if the user has created an event in the past
 			// if not, the event will be hidden till review
 			$otherEventsFromUser = $this->eventRepository->findAllByUserId($this->getFrontendUserId());
-			if ($otherEventsFromUser->count() > 0) {
-				$newEvent->setHidden(FALSE);
-			} else {
+			if ($otherEventsFromUser->count() == 0) {
 				// if the event is the first one by the user, send a mail
 				/** @var t3lib_mail_Message $mail */
 				$mail = t3lib_div::makeInstance('t3lib_mail_Message');
 				$mail->setTo('maintenance@typo3.org');
-				$mail->setSubject('Please review the new event from user ' . $GLOBALS['TSFE']->fe_user->user['username']);
+				$mail->setSubject('There is a new first event from user ' . $GLOBALS['TSFE']->fe_user->user['username']);
 				$mail->setFrom('noreply@typo3.org');
-				$mail->setBody('There is a new event by the user ' . $GLOBALS['TSFE']->fe_user->user['username'] .'! Please review it.');
+				$mail->setBody('Title: ' . $newEvent->getTitle() . LF . 'User: ' . $GLOBALS['TSFE']->fe_user->user['username']);
 				$mail->send();
 			}
 
